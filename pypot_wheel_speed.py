@@ -11,10 +11,7 @@ import time
 
 import pypot.dynamixel
 
-AMP = 10
-FREQ = 15.
-
-rotation_factor =  60. / (2. * numpy.pi * 1.339)
+rotation_factor =  60. / (2. * numpy.pi * 1.339) # TODO : adapt value to be exact
 
 LEFT_WHEEL = 1
 RIGHT_WHEEL = 2
@@ -39,7 +36,7 @@ def init_wheels():
     if len(ids) != 2:
         raise IOError('Not exactly two wheels were found')
     
-    dxl_io.enable_torque(wheel_ids) # I don't know what it means
+    dxl_io.enable_torque(wheel_ids)
     dxl_io.set_wheel_mode(wheel_ids)    
     
     print('Wheels initialized')
@@ -47,36 +44,31 @@ def init_wheels():
 
 
 def shutdown_wheels():
-    set_wheel_speed(LEFT_WHEEL, 0.)
-    set_wheel_speed(RIGHT_WHEEL, 0.)
+    dxl_io.disable_torque(wheel_ids)
+    print('Wheels shut down')
 
-
-def set_wheel_speed(wheel_name, v):
-    wheel_speeds[wheel_name] = rotation_factor * v
+def set_wheel_speed(wheel_name, w):
+    wheel_speeds[wheel_name] = rotation_factor * w * ((-1)**(1 + wheel_name))
     dxl_io.set_moving_speed(wheel_speeds)
     
     
-def increase_wheel_speed(wheel_name, dv):
-    wheel_speeds[wheel_name] += rotation_factor * dv
+def set_wheel_speeds(w):
+    wheel_speeds[LEFT_WHEEL] = rotation_factor * w
+    wheel_speeds[RIGHT_WHEEL] = -rotation_factor * w
+    dxl_io.set_moving_speed(wheel_speeds)
+    
+        
+def increase_wheel_speed(wheel_name, dw):
+    wheel_speeds[wheel_name] += rotation_factor * dw * ((-1)**(1 + wheel_name))
+    dxl_io.set_moving_speed(wheel_speeds)
+
+
+def increase_wheel_speeds(dw):
+    wheel_speeds[LEFT_WHEEL] += rotation_factor * dw
+    wheel_speeds[RIGHT_WHEEL] -= rotation_factor * dw
+    dxl_io.set_moving_speed(wheel_speeds)
+    
 
 def get_wheel_speed(wheel_name):
-    return wheel_speeds[wheel_name]
+    return ((-1)**(1 + wheel_name)) * wheel_speeds[wheel_name] / rotation_factor
     
-
-     
-     
-init_wheels()     
-t0 = time.time()
-
-while True:
-    t = time.time()
-    if (t - t0) > 10:
-        break
-    
-    v = AMP*numpy.sin(FREQ * (t - t0))
-    set_wheel_speed(LEFT_WHEEL, v)
-    set_wheel_speed(RIGHT_WHEEL, -v)
-
-    time.sleep(0.02)
-
-shutdown_wheels()
