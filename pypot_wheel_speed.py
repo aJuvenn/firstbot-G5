@@ -49,7 +49,7 @@ def shutdown_wheels():
 
 def set_wheel_speed(wheel_name, w):
     wheel_speeds[wheel_name] = rotation_factor * w * ((-1)**(1 + wheel_name))
-    dxl_io.set_moving_speed(wheel_speeds)
+    dxl_io.set_moving_speed({wheel_name : wheel_speeds[wheel_name]})
     
     
 def set_wheel_speeds(w):
@@ -60,7 +60,7 @@ def set_wheel_speeds(w):
         
 def increase_wheel_speed(wheel_name, dw):
     wheel_speeds[wheel_name] += rotation_factor * dw * ((-1)**(1 + wheel_name))
-    dxl_io.set_moving_speed(wheel_speeds)
+    dxl_io.set_moving_speed({wheel_name : wheel_speeds[wheel_name]})
 
 
 def increase_wheel_speeds(dw):
