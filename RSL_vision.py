@@ -6,8 +6,8 @@ cap = cv2.VideoCapture(0)
 ### MAGIC NUMBERS ###
 
 # define range of yellow-green stripes
-lower_black = np.array([20,95,85])
-upper_black = np.array([50,255,220])
+lower_spec = np.array([20,95,85])
+upper_spec = np.array([50,255,220])
 
 
 # define range of black color in HSV

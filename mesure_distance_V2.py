@@ -8,6 +8,8 @@ Created on Thu Oct  4 10:21:18 2018
 import itertools
 import numpy
 import time
+import sys
+import select
 
 import pypot.dynamixel
 
@@ -56,6 +58,28 @@ def position_origine():
 def shutdown_wheels():
     dxl_io.disable_torque(wheel_ids)
     print('Wheels shut down')
+
+
+def print_if_input(x, y,theta):
+
+    if sys.stdin not in select.select([sys.stdin], [], [], 0)[0]:
+        return
+        
+    
+    line = sys.stdin.readline()   # we could do more than just shuting down by reading this line
+
+    print('x :')
+    print(x/10.)
+    
+    print('y : ')
+    print(y/10.)
+    
+    print('theta : ')
+    if theta > pi:
+        print((theta - 2.*pi)*180./pi)
+    else:
+        print(theta*180./pi)
+
 
 def boucle_mesure_distance():
     distance_parcourue=[0,0,0]
@@ -117,18 +141,17 @@ def boucle_mesure_distance():
       #  if abs(dd) < 0.05:
        #     dd = 0.  
         
-    
-        print(dg, dd)        
-        
         dteta=(dg-dd)/L
         if dteta==0:
             dxr=0.
             dyr=dg
         else:
             R=L/2+dd/dteta
-            c=sqrt(2*(R**2)*(1-cos(dteta)))
-            dxr=(c**2)/(2*R)
-            dyr=sqrt((c**2)-(c**4)/(4*(R**2)))
+            dxr = R * (1 - cos(dteta))
+            dyr = R * sin(dteta)
+            #c=sqrt(2*(R**2)*(1-cos(dteta)))
+            #dxr=(c**2)/(2*R)
+            #dyr=sqrt((c**2)-(c**4)/(4*(R**2)))
         distance_parcourue[2]-=dteta
         distance_parcourue[2]=distance_parcourue[2]%(2*numpy.pi)
         teta=distance_parcourue[2]
@@ -136,8 +159,7 @@ def boucle_mesure_distance():
         distance_parcourue[1]+=-dxr*cos(teta)+dyr*sin(teta)
         
         
-        
-        print(distance_parcourue)
+        print_if_input(distance_parcourue[0], distance_parcourue[1], distance_parcourue[2]) 
         
 
 init_wheels()
