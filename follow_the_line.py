@@ -42,18 +42,21 @@ def update_movement(initial_speed, error, correction_coef = 5.):
 
 
 def start_interaction_loop(initial_speed, frequence, duration, correction_coef):
-
+    
     if frequence != 0.:
         period = 1./frequence
 
     loop_start = time.time()
-
+    color='black'
     while (time.time() - loop_start < duration):
-
         start = time.time()
         cut_program_if_input()
-        pict_analyse = get_and_analyse_frame()
-        print(pict_analyse)
+        change_line = spec_line_detection()
+        #print(change_line)
+        if change_line == True:
+            color='red'
+        pict_analyse = get_and_analyse_frame(color)
+        #print(pict_analyse)
         update_movement(initial_speed, pict_analyse, correction_coef)
         stop = time.time()
         
@@ -65,7 +68,6 @@ def start_interaction_loop(initial_speed, frequence, duration, correction_coef):
 def follow_the_line(initial_speed, acquisition_freq, duration, correction_coef):
     
     init_wheels()
-    set_wheel_speeds(initial_speed)
     start_interaction_loop(initial_speed, acquisition_freq, duration, correction_coef)
     shutdown_wheels()
 
