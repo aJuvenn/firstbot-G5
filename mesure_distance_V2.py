@@ -13,7 +13,7 @@ import select
 
 import pypot.dynamixel
 
-from numpy import sin, cos, sqrt, pi
+from numpy import sin, cos, sqrt, pi,arctan2
 
 AMP = 10
 FREQ = 15.
@@ -68,18 +68,33 @@ def print_if_input(x, y,theta):
     
     line = sys.stdin.readline()   # we could do more than just shuting down by reading this line
 
-    print('x :')
+    print('CARTESIAN COORDINATES')
+    print('x (cm):')
     print(x/10.)
     
-    print('y : ')
+    print('y (cm): ')
     print(y/10.)
+    print(' ')    
     
-    print('theta : ')
+  
+    print('POLAR COORDINATES')
+    radius = sqrt(x**2 + y**2) / 10.
+    angle = arctan2(y,x) * 180./pi
+    print('Radius (cm):')
+    print(radius)
+    print('Angle (degrees) :')
+    print(angle)
+    print(' ')
+    
+    print('ANGLE OF VIEW')
+    print('theta (degrees): ')
     if theta > pi:
         print((theta - 2.*pi)*180./pi)
     else:
         print(theta*180./pi)
-
+    print(' ')
+            
+        
 
 def boucle_mesure_distance():
     distance_parcourue=[0,0,0]

@@ -48,20 +48,35 @@ def start_interaction_loop(initial_speed, frequence, duration, correction_coef):
 
     loop_start = time.time()
     color='black'
+    very_first_detection = False
+    
     while (time.time() - loop_start < duration):
+        
         start = time.time()
         cut_program_if_input()
         change_line = spec_line_detection()
         #print(change_line)
-        if change_line == True:
+        if change_line == True and very_first_detection==False:
+            wait_new_detection = time.time()+ 10
+            very_first_detection = True
             color='red'
+        if change_line == True and time.time()>wait_new_detection:
+            return
+            
         pict_analyse = get_and_analyse_frame(color)
         #print(pict_analyse)
         update_movement(initial_speed, pict_analyse, correction_coef)
         stop = time.time()
+
+        print('Analyse and decision time : %f seconds'% (stop - start))
         
         if frequence != 0.:
             time.sleep(max(0., period - (stop - start))) # send warning ?
+            
+        after_sleep = time.time()
+        print('Total loop (Hertz) : ')
+        print(1./(after_sleep - start))
+        
             
 
     
